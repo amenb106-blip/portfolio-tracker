@@ -1,38 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Portfolio Tracker</title>
+  <title>Portfolio Dashboard</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
 <body>
-  <h1>Portfolio Value</h1>
-  <div class="total" id="total">$0.00</div>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">◆</span>
+      Portfolio Dashboard
+    </div>
+  </header>
 
-  <div class="form">
-    <input id="ticker" placeholder="Ticker">
-    <input id="shares" placeholder="Shares" type="number">
-    <input id="buy_price" placeholder="Buy Price" type="number">
-    <button onclick="addStock()">Add</button>
-  </div>
+  <main class="container">
+    <section class="card hero">
+      <div class="hero-label">Total Portfolio Value</div>
+      <div class="total" id="total">$0.00</div>
+      <div class="hero-gain" id="total-gain">—</div>
+    </section>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Ticker</th>
-        <th class="num">Shares</th>
-        <th class="num">Price</th>
-        <th class="num">Value</th>
-        <th class="num">Gain</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody id="table-body"></tbody>
-  </table>
+    <section class="card">
+      <h2 class="card-title">Add Holding</h2>
+      <div class="form">
+        <input id="ticker" placeholder="Ticker">
+        <input id="shares" placeholder="Shares" type="number">
+        <input id="buy_price" placeholder="Buy Price" type="number">
+        <button class="btn-primary" onclick="addStock()">Add</button>
+      </div>
+    </section>
 
-  <div class="chart-wrap">
-    <canvas id="chart"></canvas>
-  </div>
+    <div class="grid">
+      <section class="card">
+        <h2 class="card-title">Holdings</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Ticker</th>
+                <th class="num">Shares</th>
+                <th class="num">Price</th>
+                <th class="num">Value</th>
+                <th class="num">Gain</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+          <div class="empty" id="empty">No holdings yet. Add one above to get started.</div>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 class="card-title">Allocation</h2>
+        <div class="chart-wrap">
+          <canvas id="chart"></canvas>
+        </div>
+      </section>
+    </div>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="{{ url_for('static', filename='app.js') }}"></script>

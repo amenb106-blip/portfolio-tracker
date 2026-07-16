@@ -17,8 +17,11 @@ async function render() {
   table.innerHTML = "";
 
   let totalValue = 0;
+  let totalCost = 0;
   const labels = [];
   const values = [];
+
+  document.getElementById("empty").style.display = portfolio.length ? "none" : "block";
 
   for (const stock of portfolio) {
     let price;
@@ -34,6 +37,7 @@ async function render() {
     const cls = gain >= 0 ? "up" : "down";
 
     totalValue += value;
+    totalCost += cost;
     labels.push(stock.ticker);
     values.push(value);
 
@@ -50,6 +54,19 @@ async function render() {
   }
 
   document.getElementById("total").innerText = `$${totalValue.toFixed(2)}`;
+
+  const totalGain = totalValue - totalCost;
+  const totalGainPct = totalCost ? (totalGain / totalCost) * 100 : 0;
+  const gainEl = document.getElementById("total-gain");
+  if (portfolio.length) {
+    const sign = totalGain >= 0 ? "+" : "";
+    gainEl.innerText = `${sign}$${totalGain.toFixed(2)} (${sign}${totalGainPct.toFixed(2)}%)`;
+    gainEl.className = "hero-gain " + (totalGain >= 0 ? "up" : "down");
+  } else {
+    gainEl.innerText = "—";
+    gainEl.className = "hero-gain";
+  }
+
   renderChart(labels, values);
 }
 

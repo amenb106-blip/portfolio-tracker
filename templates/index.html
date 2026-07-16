@@ -8,56 +8,55 @@
 <body>
   <header class="topbar">
     <div class="brand">
-      <span class="logo">◆</span>
+      <span class="logo">▨</span>
       Portfolio Dashboard
     </div>
+    <button class="btn-ghost" id="refresh" onclick="refresh()">↻ Refresh</button>
   </header>
 
   <main class="container">
-    <section class="card hero">
-      <div class="hero-label">Total Portfolio Value</div>
-      <div class="total" id="total">$0.00</div>
-      <div class="hero-gain" id="total-gain">—</div>
-    </section>
+    <div id="banner" class="banner" hidden></div>
 
-    <section class="card">
-      <h2 class="card-title">Add Holding</h2>
-      <div class="form">
-        <input id="ticker" placeholder="Ticker">
-        <input id="shares" placeholder="Shares" type="number">
-        <input id="buy_price" placeholder="Buy Price" type="number">
-        <button class="btn-primary" onclick="addStock()">Add</button>
+    <section class="topgrid">
+      <div class="hero">
+        <div class="hero-label">Total Portfolio Value</div>
+        <div class="total" id="total">$0.00</div>
+        <div class="hero-gain" id="total-gain">—</div>
+      </div>
+      <div class="chart-panel">
+        <div class="panel-label">Allocation</div>
+        <div class="chart-wrap"><canvas id="chart"></canvas></div>
       </div>
     </section>
 
-    <div class="grid">
-      <section class="card">
+    <section class="card">
+      <div class="card-head">
         <h2 class="card-title">Holdings</h2>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Ticker</th>
-                <th class="num">Shares</th>
-                <th class="num">Price</th>
-                <th class="num">Value</th>
-                <th class="num">Gain</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="table-body"></tbody>
-          </table>
-          <div class="empty" id="empty">No holdings yet. Add one above to get started.</div>
+        <div class="form">
+          <input id="ticker" placeholder="Ticker">
+          <input id="shares" placeholder="Shares" type="number">
+          <input id="buy_price" placeholder="Buy Price" type="number">
+          <button class="btn-primary" onclick="addStock()">Add</button>
         </div>
-      </section>
+      </div>
 
-      <section class="card">
-        <h2 class="card-title">Allocation</h2>
-        <div class="chart-wrap">
-          <canvas id="chart"></canvas>
-        </div>
-      </section>
-    </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Ticker</th>
+              <th class="num">Shares</th>
+              <th class="num">Price</th>
+              <th class="num">Value</th>
+              <th class="num">Gain</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+        <div class="empty" id="empty">No holdings yet. Add one above to get started.</div>
+      </div>
+    </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

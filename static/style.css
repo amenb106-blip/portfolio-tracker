@@ -1,0 +1,91 @@
+body {
+  background: #0f1115;
+  color: #e6e6e6;
+  font-family: -apple-system, "Segoe UI", sans-serif;
+  max-width: 900px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+h1 { font-size: 15px; 
+  color: #8b8f98; 
+  font-weight: 500; 
+  letter-spacing: 0.5px; 
+  text-transform: uppercase; 
+}
+
+.total { font-size: 44px; 
+  font-weight: 600; 
+  margin: 4px 0 30px; 
+}
+
+table { width: 100%; 
+  border-collapse: collapse; 
+}
+
+th {
+  text-align: left; 
+  font-size: 12px; 
+  color: #8b8f98;
+  font-weight: 500; 
+  padding: 10px 12px;
+  border-bottom: 1px solid #23262d;
+}
+
+td { padding: 14px 12px; 
+  border-bottom: 1px solid #1a1d23; 
+  font-size: 15px; 
+}
+
+.ticker { 
+  font-weight: 600; 
+}
+
+.up { 
+  color: #26c281; 
+}
+
+.down { 
+  color: #ec5b56; 
+}
+
+.num { 
+  text-align: right; 
+}
+
+.form { display: flex; 
+  gap: 8px; 
+  margin-bottom: 24px; 
+}
+
+.form input {
+  background: #16191f; 
+  border: 1px solid #23262d; 
+  color: #e6e6e6;
+  padding: 10px 12px; 
+  border-radius: 6px; 
+  font-size: 14px; 
+  width: 120px;
+}
+
+.form button, .remove {
+  background: #2a2e37; 
+  border: 1px solid #23262d; 
+  color: #e6e6e6;
+  padding: 10px 16px; 
+  border-radius: 6px; 
+  font-size: 14px; 
+  cursor: pointer;
+}
+
+.form button:hover, .remove:hover { 
+  background: #343945; 
+}
+
+.remove { 
+  padding: 4px 10px; 
+}
+
+.chart-wrap { 
+  max-width: 360px; 
+  margin: 40px 0; 
+}

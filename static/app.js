@@ -21,24 +21,43 @@ function loadPortfolio() {
   }
 }
 
+function loadWatchlist() {
+  try {
+    const saved = JSON.parse(localStorage.getItem("watchlist"));
+    if (!Array.isArray(saved)) return [];
+    return saved.filter(t => typeof t === "string" && TICKER_PATTERN.test(t));
+  } catch {
+    return [];
+  }
+}
+
 let portfolio = loadPortfolio();
+let watchlist = loadWatchlist();
 let chart = null;
 let lastChart = { labels: [], values: [] };
 let renderVersion = 0;
+let watchlistVersion = 0;
 
 const CHART_COLORS = [
   "#22d3ee", "#2fd39b", "#818cf8", "#f0645f",
   "#fbbf24", "#c084fc", "#38bdf8", "#f97316"
 ];
 
+function formatAmount(amount) {
+  return Math.abs(amount).toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
+}
+
 function formatCurrency(amount) {
   const sign = amount < 0 ? "-" : "";
-  return `${sign}$${Math.abs(amount).toFixed(2)}`;
+  return `${sign}$${formatAmount(amount)}`;
 }
 
 function formatSignedCurrency(amount) {
   const sign = amount < 0 ? "-" : "+";
-  return `${sign}$${Math.abs(amount).toFixed(2)}`;
+  return `${sign}$${formatAmount(amount)}`;
 }
 
 function formatSignedPct(pct, decimals = 2) {
@@ -46,8 +65,22 @@ function formatSignedPct(pct, decimals = 2) {
   return `${sign}${Math.abs(pct).toFixed(decimals)}%`;
 }
 
+function gainNodes(gain, gainPct, decimals) {
+  const amount = document.createElement("span");
+  amount.className = "gain-amt";
+  amount.textContent = formatSignedCurrency(gain);
+  const pct = document.createElement("span");
+  pct.className = "gain-pct";
+  pct.textContent = ` (${formatSignedPct(gainPct, decimals)})`;
+  return [amount, pct];
+}
+
 function savePortfolio() {
   localStorage.setItem("portfolio", JSON.stringify(portfolio));
+}
+
+function saveWatchlist() {
+  localStorage.setItem("watchlist", JSON.stringify(watchlist));
 }
 
 function showBanner(msg) {
@@ -62,7 +95,7 @@ function clearBanner() {
   b.textContent = "";
 }
 
-async function fetchPrice(ticker) {
+async function fetchQuote(ticker) {
   const res = await fetch(`/price?ticker=${encodeURIComponent(ticker)}`);
   const data = await res.json();
   if (!res.ok || data.error) {
@@ -72,7 +105,11 @@ async function fetchPrice(ticker) {
   if (!Number.isFinite(price) || price < 0) {
     throw new Error(`Invalid price returned for ${ticker}`);
   }
-  return price;
+  const prevClose = Number(data.previous_close);
+  return {
+    price,
+    prevClose: Number.isFinite(prevClose) && prevClose > 0 ? prevClose : null
+  };
 }
 
 async function render() {
@@ -84,7 +121,7 @@ async function render() {
 
   const results = await Promise.all(holdings.map(async stock => {
     try {
-      return { stock, price: await fetchPrice(stock.ticker) };
+      return { stock, price: (await fetchQuote(stock.ticker)).price };
     } catch {
       return { stock, price: null };
     }
@@ -103,11 +140,11 @@ async function render() {
   for (const { stock, price } of results) {
     if (price === null) {
       failed.push(stock.ticker);
-      rows.append(createRow(stock, [
+      rows.append(createRow([
         { text: stock.ticker, className: "ticker", label: "Ticker" },
         { text: stock.shares, className: "num", label: "Shares" },
         { text: "price unavailable", className: "num down", colSpan: 3, label: "Price" }
-      ]));
+      ], () => removeStock(stock.ticker)));
       continue;
     }
 
@@ -122,13 +159,13 @@ async function render() {
     labels.push(stock.ticker);
     values.push(value);
 
-    rows.append(createRow(stock, [
+    rows.append(createRow([
       { text: stock.ticker, className: "ticker", label: "Ticker" },
       { text: stock.shares, className: "num", label: "Shares" },
       { text: formatCurrency(price), className: "num", label: "Price" },
       { text: formatCurrency(value), className: "num", label: "Value" },
-      { text: `${formatSignedCurrency(gain)} (${formatSignedPct(gainPct, 1)})`, className: `num ${cls}`, label: "Gain" }
-    ]));
+      { nodes: gainNodes(gain, gainPct, 1), className: `num ${cls}`, label: "Gain" }
+    ], () => removeStock(stock.ticker)));
   }
 
   table.replaceChildren(rows);
@@ -139,10 +176,10 @@ async function render() {
   const totalGainPct = totalCost ? (totalGain / totalCost) * 100 : 0;
   const gainEl = document.getElementById("total-gain");
   if (labels.length) {
-    gainEl.innerText = `${formatSignedCurrency(totalGain)} (${formatSignedPct(totalGainPct)})`;
+    gainEl.replaceChildren(...gainNodes(totalGain, totalGainPct, 2));
     gainEl.className = "hero-gain " + (totalGain >= 0 ? "up" : "down");
   } else {
-    gainEl.innerText = "—";
+    gainEl.replaceChildren("—");
     gainEl.className = "hero-gain";
   }
 
@@ -155,11 +192,12 @@ async function render() {
   renderChart(labels, values);
 }
 
-function createRow(stock, cells) {
+function createRow(cells, onRemove) {
   const row = document.createElement("tr");
-  for (const { text, className, colSpan, label } of cells) {
+  for (const { text, nodes, className, colSpan, label } of cells) {
     const cell = document.createElement("td");
-    cell.textContent = text;
+    if (nodes) cell.append(...nodes);
+    else cell.textContent = text;
     if (className) cell.className = className;
     if (colSpan) cell.colSpan = colSpan;
     if (label) cell.setAttribute("data-label", label);
@@ -171,7 +209,7 @@ function createRow(stock, cells) {
   removeButton.type = "button";
   removeButton.className = "remove";
   removeButton.textContent = "✕";
-  removeButton.addEventListener("click", () => removeStock(stock.ticker));
+  removeButton.addEventListener("click", onRemove);
   actionCell.append(removeButton);
   row.append(actionCell);
   return row;
@@ -182,7 +220,6 @@ function renderChart(labels, values) {
   const ctx = document.getElementById("chart");
   const styles = getComputedStyle(document.documentElement);
   const borderColor = styles.getPropertyValue("--bg").trim() || "#0b0d12";
-  const legendColor = styles.getPropertyValue("--muted").trim() || "#8b90a0";
   if (chart) chart.destroy();
   chart = new Chart(ctx, {
     type: "doughnut",
@@ -199,13 +236,108 @@ function renderChart(labels, values) {
     options: {
       cutout: "62%",
       plugins: {
-        legend: {
-          position: "bottom",
-          labels: { color: legendColor, padding: 14, font: { size: 12 }, boxWidth: 12 }
-        }
+        legend: { display: false }
       }
     }
   });
+  renderLegend(labels, values);
+}
+
+function renderLegend(labels, values) {
+  const legend = document.getElementById("chart-legend");
+  const total = values.reduce((sum, v) => sum + v, 0);
+  const rows = document.createDocumentFragment();
+  labels.forEach((ticker, i) => {
+    const row = document.createElement("div");
+    row.className = "legend-row";
+
+    const dot = document.createElement("span");
+    dot.className = "legend-dot";
+    dot.style.background = CHART_COLORS[i % CHART_COLORS.length];
+
+    const name = document.createElement("span");
+    name.className = "legend-ticker";
+    name.textContent = ticker;
+
+    const pct = document.createElement("span");
+    pct.className = "legend-pct";
+    pct.textContent = total ? `${((values[i] / total) * 100).toFixed(1)}%` : "0.0%";
+
+    row.append(dot, name, pct);
+    rows.append(row);
+  });
+  legend.replaceChildren(rows);
+}
+
+async function renderWatchlist() {
+  const version = ++watchlistVersion;
+  const tickers = [...watchlist];
+  const table = document.getElementById("watchlist-body");
+
+  document.getElementById("watchlist-empty").style.display = tickers.length ? "none" : "block";
+
+  const results = await Promise.all(tickers.map(async ticker => {
+    try {
+      return { ticker, quote: await fetchQuote(ticker) };
+    } catch {
+      return { ticker, quote: null };
+    }
+  }));
+
+  // A newer watchlist render was requested while lookups were in flight.
+  if (version !== watchlistVersion) return;
+
+  const rows = document.createDocumentFragment();
+  for (const { ticker, quote } of results) {
+    if (quote === null) {
+      rows.append(createRow([
+        { text: ticker, className: "ticker", label: "Ticker" },
+        { text: "price unavailable", className: "num down", colSpan: 2, label: "Price" }
+      ], () => removeWatch(ticker)));
+      continue;
+    }
+
+    let changeCell;
+    if (quote.prevClose === null) {
+      changeCell = { text: "—", className: "num", label: "Day" };
+    } else {
+      const change = quote.price - quote.prevClose;
+      const changePct = (change / quote.prevClose) * 100;
+      const cls = change >= 0 ? "up" : "down";
+      changeCell = { nodes: gainNodes(change, changePct, 2), className: `num ${cls}`, label: "Day" };
+    }
+
+    rows.append(createRow([
+      { text: ticker, className: "ticker", label: "Ticker" },
+      { text: formatCurrency(quote.price), className: "num", label: "Price" },
+      changeCell
+    ], () => removeWatch(ticker)));
+  }
+
+  table.replaceChildren(rows);
+}
+
+function addWatch() {
+  const input = document.getElementById("watch-ticker");
+  const ticker = input.value.trim().toUpperCase();
+
+  if (!TICKER_PATTERN.test(ticker)) {
+    showBanner("Enter a valid ticker to add to the watchlist.");
+    return;
+  }
+
+  if (!watchlist.includes(ticker)) {
+    watchlist.push(ticker);
+    saveWatchlist();
+  }
+  input.value = "";
+  renderWatchlist();
+}
+
+function removeWatch(ticker) {
+  watchlist = watchlist.filter(t => t !== ticker);
+  saveWatchlist();
+  renderWatchlist();
 }
 
 function addStock() {
@@ -251,7 +383,7 @@ async function refresh() {
   const original = btn.textContent;
   btn.textContent = "↻ Refreshing…";
   try {
-    await render();
+    await Promise.all([render(), renderWatchlist()]);
   } finally {
     btn.disabled = false;
     btn.classList.remove("spinning");
@@ -281,3 +413,4 @@ function initTheme() {
 
 initTheme();
 render();
+renderWatchlist();

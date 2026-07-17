@@ -125,7 +125,10 @@ body {
   flex-direction: column;
 }
 @media (max-width: 860px) {
-  .chart-panel { border-left: none; padding-left: 0; border-top: 1px solid var(--border); padding-top: 24px; }
+  .chart-panel { border-left: none; 
+    padding-left: 0; 
+    border-top: 1px solid var(--border); 
+    padding-top: 24px; }
 }
 .panel-label {
   font-size: 14px;
@@ -133,12 +136,56 @@ body {
   font-weight: 500;
   margin-bottom: 16px;
 }
+.chart-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-height: 0;
+}
 .chart-wrap {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   max-height: 240px;
+}
+.chart-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 108px;
+  font-size: 13px;
+}
+.legend-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.legend-ticker { font-weight: 600; }
+.legend-pct {
+  margin-left: auto;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Cards grid (holdings + watchlist) ---- */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.cards-grid > .card { min-width: 0; }
+@media (max-width: 1000px) {
+  .cards-grid { grid-template-columns: 1fr; }
 }
 
 /* ---- Holdings card ---- */
@@ -187,6 +234,7 @@ tbody tr:hover { background: var(--surface-2); }
 .num { text-align: right; font-variant-numeric: tabular-nums; }
 .up { color: var(--up); }
 .down { color: var(--down); }
+.gain-pct { opacity: 0.65; }
 
 .empty {
   color: var(--muted);
@@ -200,6 +248,15 @@ tbody tr:hover { background: var(--surface-2); }
   .container { padding: 20px 16px 48px; }
   .card { padding: 20px 16px; }
   .total { font-size: 52px; letter-spacing: -1.5px; }
+
+  /* Full-bleed holdings card: cancel the container's 16px side padding. */
+  .holdings-card {
+    margin-left: -16px;
+    margin-right: -16px;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
 
   .table-wrap { overflow-x: visible; }
   table, tbody, tr, td { display: block; width: 100%; }

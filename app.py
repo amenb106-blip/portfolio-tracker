@@ -13,7 +13,7 @@ def price():
     if not ticker:
         return jsonify({"error": "missing ticker"}), 400
     try:
-        return jsonify({"price": prices.get_price(ticker)})
+        return jsonify(prices.get_quote(ticker))
     except Exception:
         return jsonify({"error": f"could not fetch price for {ticker}"}), 400
 

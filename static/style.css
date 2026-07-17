@@ -117,12 +117,31 @@ body {
   letter-spacing: -2px;
   line-height: 1;
 }
-.hero-gain {
+.hero-stats {
   margin-top: 16px;
-  font-size: 18px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px 28px;
+  flex-wrap: wrap;
+}
+.stat {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.stat-label {
+  font-size: 11px;
   font-weight: 600;
   color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
 }
+.stat-value {
+  font-size: 18px;
+  font-weight: 600;
+}
+.stat-value .gain-pct { font-size: 15px; }
+.stat-empty { color: var(--muted); }
 
 /* ---- Chart panel ---- */
 .chart-panel {
@@ -222,6 +241,15 @@ tbody tr:hover { background: var(--surface-2); }
 .down { color: var(--down); }
 .gain-pct { opacity: 0.65; }
 
+/* Stacked gain in table cells: dollars over a smaller percent. */
+.gain {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.3;
+}
+.gain .gain-pct { font-size: 12px; }
+
 .empty {
   color: var(--muted);
   font-size: 14px;
@@ -270,9 +298,6 @@ tbody tr:hover { background: var(--surface-2); }
   }
   tbody tr td:last-child { border-bottom: none; }
 
-  /* Value is price × shares — omit it on mobile to keep cards short. */
-  td[data-label="Value"] { display: none; }
-
   td[data-label]::before {
     content: attr(data-label);
     color: var(--muted);
@@ -285,6 +310,35 @@ tbody tr:hover { background: var(--surface-2); }
 
   /* Action cell (remove button) has no label; keep it flush right. */
   td:not([data-label]) { justify-content: flex-end; }
+
+  /* Holdings: card grid — ticker + remove on top, three stat columns,
+     then the two gains. Labels sit above their values. */
+  .holdings-card tbody tr {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    padding: 8px 10px;
+  }
+  .holdings-card td {
+    display: block;
+    width: auto;
+    border-bottom: none;
+    text-align: left;
+    padding: 6px 4px;
+  }
+  .holdings-card td[data-label]::before {
+    display: block;
+    margin-bottom: 2px;
+  }
+  .holdings-card td[data-label="Ticker"] { order: 0; flex: 1 1 auto; font-size: 15px; }
+  .holdings-card td[data-label="Ticker"]::before { display: none; }
+  .holdings-card td:not([data-label]) { order: 1; }
+  .holdings-card td[data-label="Shares"] { order: 2; width: 33.33%; }
+  .holdings-card td[data-label="Price"] { order: 3; width: 33.33%; }
+  .holdings-card td[data-label="Value"] { order: 4; width: 33.33%; }
+  .holdings-card td[data-label="Total Gain"] { order: 5; width: 50%; }
+  .holdings-card td[data-label="Daily Gain"] { order: 6; width: 50%; }
+  .holdings-card td .gain { align-items: flex-start; }
 }
 
 /* ---- Error banner ---- */

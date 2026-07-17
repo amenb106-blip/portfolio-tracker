@@ -65,14 +65,43 @@ function formatSignedPct(pct, decimals = 2) {
   return `${sign}${Math.abs(pct).toFixed(decimals)}%`;
 }
 
-function gainNodes(gain, gainPct, decimals) {
+function gainParts(gain, gainPct, decimals) {
   const amount = document.createElement("span");
   amount.className = "gain-amt";
   amount.textContent = formatSignedCurrency(gain);
   const pct = document.createElement("span");
   pct.className = "gain-pct";
-  pct.textContent = ` (${formatSignedPct(gainPct, decimals)})`;
+  pct.textContent = formatSignedPct(gainPct, decimals);
   return [amount, pct];
+}
+
+// Table cells: dollars stacked above the percent.
+function gainStack(gain, gainPct, decimals) {
+  const wrap = document.createElement("span");
+  wrap.className = "gain";
+  wrap.append(...gainParts(gain, gainPct, decimals));
+  return wrap;
+}
+
+// Hero: "TOTAL GAIN +$5,234.56 +36.33%" — label, then inline values.
+// A null gain renders as a muted dash.
+function heroStat(label, gain, gainPct) {
+  const stat = document.createElement("span");
+  stat.className = "stat";
+  const labelEl = document.createElement("span");
+  labelEl.className = "stat-label";
+  labelEl.textContent = label;
+  const value = document.createElement("span");
+  if (gain === null) {
+    value.className = "stat-value stat-empty";
+    value.textContent = "—";
+  } else {
+    value.className = "stat-value " + (gain >= 0 ? "up" : "down");
+    const [amount, pct] = gainParts(gain, gainPct, 2);
+    value.append(amount, " ", pct);
+  }
+  stat.append(labelEl, value);
+  return stat;
 }
 
 function savePortfolio() {
@@ -121,9 +150,9 @@ async function render() {
 
   const results = await Promise.all(holdings.map(async stock => {
     try {
-      return { stock, price: (await fetchQuote(stock.ticker)).price };
+      return { stock, quote: await fetchQuote(stock.ticker) };
     } catch {
-      return { stock, price: null };
+      return { stock, quote: null };
     }
   }));
 
@@ -133,26 +162,42 @@ async function render() {
   const rows = document.createDocumentFragment();
   let totalValue = 0;
   let totalCost = 0;
+  let dailyGain = 0;
+  let prevValue = 0;
   const labels = [];
   const values = [];
   const failed = [];
 
-  for (const { stock, price } of results) {
-    if (price === null) {
+  for (const { stock, quote } of results) {
+    if (quote === null) {
       failed.push(stock.ticker);
       rows.append(createRow([
         { text: stock.ticker, className: "ticker", label: "Ticker" },
         { text: stock.shares, className: "num", label: "Shares" },
-        { text: "price unavailable", className: "num down", colSpan: 3, label: "Price" }
+        { text: "price unavailable", className: "num down", colSpan: 4, label: "Price" }
       ], () => removeStock(stock.ticker)));
       continue;
     }
 
+    const price = quote.price;
     const value = price * stock.shares;
     const cost = stock.buy_price * stock.shares;
     const gain = value - cost;
     const gainPct = cost ? (gain / cost) * 100 : 0;
     const cls = gain >= 0 ? "up" : "down";
+
+    let dailyCell = { text: "—", className: "num", label: "Daily Gain" };
+    if (quote.prevClose !== null) {
+      const day = (price - quote.prevClose) * stock.shares;
+      const dayPct = ((price - quote.prevClose) / quote.prevClose) * 100;
+      dailyGain += day;
+      prevValue += quote.prevClose * stock.shares;
+      dailyCell = {
+        nodes: [gainStack(day, dayPct, 2)],
+        className: `num ${day >= 0 ? "up" : "down"}`,
+        label: "Daily Gain"
+      };
+    }
 
     totalValue += value;
     totalCost += cost;
@@ -164,7 +209,8 @@ async function render() {
       { text: stock.shares, className: "num", label: "Shares" },
       { text: formatCurrency(price), className: "num", label: "Price" },
       { text: formatCurrency(value), className: "num", label: "Value" },
-      { nodes: gainNodes(gain, gainPct, 1), className: `num ${cls}`, label: "Gain" }
+      { nodes: [gainStack(gain, gainPct, 2)], className: `num ${cls}`, label: "Total Gain" },
+      dailyCell
     ], () => removeStock(stock.ticker)));
   }
 
@@ -174,14 +220,12 @@ async function render() {
 
   const totalGain = totalValue - totalCost;
   const totalGainPct = totalCost ? (totalGain / totalCost) * 100 : 0;
-  const gainEl = document.getElementById("total-gain");
-  if (labels.length) {
-    gainEl.replaceChildren(...gainNodes(totalGain, totalGainPct, 2));
-    gainEl.className = "hero-gain " + (totalGain >= 0 ? "up" : "down");
-  } else {
-    gainEl.replaceChildren("—");
-    gainEl.className = "hero-gain";
-  }
+  const statsEl = document.getElementById("hero-stats");
+  statsEl.replaceChildren(
+    heroStat("Total Gain", labels.length ? totalGain : null, totalGainPct),
+    heroStat("Daily Gain", labels.length && prevValue ? dailyGain : null,
+      prevValue ? (dailyGain / prevValue) * 100 : 0)
+  );
 
   if (failed.length) {
     showBanner(`Couldn't fetch a price for: ${failed.join(", ")}. Check the ticker symbol.`);
@@ -305,7 +349,7 @@ async function renderWatchlist() {
       const change = quote.price - quote.prevClose;
       const changePct = (change / quote.prevClose) * 100;
       const cls = change >= 0 ? "up" : "down";
-      changeCell = { nodes: gainNodes(change, changePct, 2), className: `num ${cls}`, label: "Day" };
+      changeCell = { nodes: [gainStack(change, changePct, 2)], className: `num ${cls}`, label: "Day" };
     }
 
     rows.append(createRow([

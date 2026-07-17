@@ -23,76 +23,79 @@
   <main class="container">
     <div id="banner" class="banner" hidden></div>
 
-    <section class="topgrid">
-      <div class="hero">
-        <div class="hero-label">Total Portfolio Value</div>
-        <div class="total" id="total">$0.00</div>
-        <div class="hero-gain" id="total-gain">—</div>
-      </div>
-      <div class="chart-panel">
-        <div class="panel-label">Allocation</div>
-        <div class="chart-area">
-          <div class="chart-wrap"><canvas id="chart"></canvas></div>
-          <div class="chart-legend" id="chart-legend"></div>
-        </div>
-      </div>
-    </section>
+    <div class="shell">
+      <div class="main-col">
+        <section class="hero">
+          <div class="hero-label">Total Portfolio Value</div>
+          <div class="total" id="total">$0.00</div>
+          <div class="hero-gain" id="total-gain">—</div>
+        </section>
 
-    <section class="cards-grid">
-      <div class="card holdings-card">
-        <div class="card-head">
-          <h2 class="card-title">Holdings</h2>
-          <div class="form">
-            <input id="ticker" placeholder="Ticker">
-            <input id="shares" placeholder="Shares" type="number">
-            <input id="buy_price" placeholder="Buy Price" type="number">
-            <button class="btn-primary" onclick="addStock()">Add</button>
+        <section class="chart-panel">
+          <div class="panel-label">Allocation</div>
+          <div class="chart-area">
+            <div class="chart-wrap"><canvas id="chart"></canvas></div>
+            <div class="chart-legend" id="chart-legend"></div>
+          </div>
+        </section>
+
+        <div class="card holdings-card">
+          <div class="card-head">
+            <h2 class="card-title">Holdings</h2>
+            <div class="form">
+              <input id="ticker" placeholder="Ticker">
+              <input id="shares" placeholder="Shares" type="number">
+              <input id="buy_price" placeholder="Buy Price" type="number">
+              <button class="btn-primary" onclick="addStock()">Add</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ticker</th>
+                  <th class="num">Shares</th>
+                  <th class="num">Price</th>
+                  <th class="num">Value</th>
+                  <th class="num">Gain</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="table-body"></tbody>
+            </table>
+            <div class="empty" id="empty">No holdings yet. Add one above to get started.</div>
           </div>
         </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Ticker</th>
-                <th class="num">Shares</th>
-                <th class="num">Price</th>
-                <th class="num">Value</th>
-                <th class="num">Gain</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="table-body"></tbody>
-          </table>
-          <div class="empty" id="empty">No holdings yet. Add one above to get started.</div>
-        </div>
       </div>
 
-      <div class="card watchlist-card">
-        <div class="card-head">
-          <h2 class="card-title">Watchlist</h2>
-          <div class="form">
-            <input id="watch-ticker" placeholder="Ticker">
-            <button class="btn-primary" onclick="addWatch()">Add</button>
+      <aside class="side-col">
+        <div class="card watchlist-card">
+          <div class="card-head">
+            <h2 class="card-title">Watchlist</h2>
+            <div class="form">
+              <input id="watch-ticker" placeholder="Ticker">
+              <button class="btn-primary" onclick="addWatch()">Add</button>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Ticker</th>
+                  <th class="num">Price</th>
+                  <th class="num">Day</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="watchlist-body"></tbody>
+            </table>
+            <div class="empty" id="watchlist-empty">No tickers watched yet.</div>
           </div>
         </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Ticker</th>
-                <th class="num">Price</th>
-                <th class="num">Day</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody id="watchlist-body"></tbody>
-          </table>
-          <div class="empty" id="watchlist-empty">No tickers watched yet.</div>
-        </div>
-      </div>
-    </section>
+      </aside>
+    </div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

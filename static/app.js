@@ -235,6 +235,7 @@ function renderChart(labels, values) {
     },
     options: {
       cutout: "62%",
+      maintainAspectRatio: false,
       plugins: {
         legend: { display: false }
       }

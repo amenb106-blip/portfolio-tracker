@@ -81,21 +81,15 @@ body {
   gap: 28px;
 }
 
-.shell {
+.topgrid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 28px;
-  align-items: start;
+  align-items: stretch;
 }
-.shell > * { min-width: 0; }
-.main-col {
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
-  min-width: 0;
-}
-@media (max-width: 1000px) {
-  .shell { grid-template-columns: 1fr; }
+.topgrid > * { min-width: 0; }
+@media (max-width: 860px) {
+  .topgrid { grid-template-columns: 1fr; }
 }
 
 /* ---- Hero ---- */
@@ -145,10 +139,18 @@ body {
 
 /* ---- Chart panel ---- */
 .chart-panel {
-  border-top: 1px solid var(--border);
-  padding-top: 24px;
+  border-left: 1px solid var(--border);
+  padding-left: 28px;
   display: flex;
   flex-direction: column;
+}
+@media (max-width: 860px) {
+  .chart-panel {
+    border-left: none;
+    padding-left: 0;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
 }
 .panel-label {
   font-size: 14px;
@@ -241,7 +243,6 @@ tbody tr:hover { background: var(--surface-2); }
 .down { color: var(--down); }
 .gain-pct { opacity: 0.65; }
 
-/* Stacked gain in table cells: dollars over a smaller percent. */
 .gain {
   display: inline-flex;
   flex-direction: column;
@@ -308,11 +309,8 @@ tbody tr:hover { background: var(--surface-2); }
     text-align: left;
   }
 
-  /* Action cell (remove button) has no label; keep it flush right. */
   td:not([data-label]) { justify-content: flex-end; }
 
-  /* Holdings: card grid — ticker + remove on top, three stat columns,
-     then the two gains. Labels sit above their values. */
   .holdings-card tbody tr {
     display: flex;
     flex-wrap: wrap;
@@ -385,20 +383,6 @@ tbody tr:hover { background: var(--surface-2); }
   align-items: center;
   gap: 12px;
 }
-.btn-icon {
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text);
-  width: 36px;
-  height: 36px;
-  border-radius: 0;
-  font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-.btn-icon:hover { border-color: var(--accent); color: var(--accent); }
-
 .btn-ghost {
   background: transparent;
   border: 1px solid var(--border);
@@ -407,12 +391,15 @@ tbody tr:hover { background: var(--surface-2); }
   border-radius: 0;
   font-size: 14px;
   font-weight: 500;
+  line-height: 1.2;
   cursor: pointer;
   transition: all 0.15s;
 }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 .btn-ghost:disabled { opacity: 0.5; cursor: default; }
 .btn-ghost.spinning { pointer-events: none; }
+
+.btn-ghost.btn-icon { padding: 9px 12px; }
 
 .remove {
   background: transparent;

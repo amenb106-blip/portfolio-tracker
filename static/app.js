@@ -75,7 +75,6 @@ function gainParts(gain, gainPct, decimals) {
   return [amount, pct];
 }
 
-// Table cells: dollars stacked above the percent.
 function gainStack(gain, gainPct, decimals) {
   const wrap = document.createElement("span");
   wrap.className = "gain";
@@ -83,8 +82,6 @@ function gainStack(gain, gainPct, decimals) {
   return wrap;
 }
 
-// Hero: "TOTAL GAIN +$5,234.56 +36.33%" — label, then inline values.
-// A null gain renders as a muted dash.
 function heroStat(label, gain, gainPct) {
   const stat = document.createElement("span");
   stat.className = "stat";

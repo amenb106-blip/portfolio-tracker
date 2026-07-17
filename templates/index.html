@@ -11,7 +11,13 @@
       <span class="logo">▨</span>
       Portfolio Dashboard
     </div>
-    <button class="btn-ghost" id="refresh" onclick="refresh()">↻ Refresh</button>
+    <div class="topbar-actions">
+      <select id="theme-select" class="theme-select" onchange="setTheme(this.value)" aria-label="Color theme">
+        <option value="dark">🌙 Dark mode</option>
+        <option value="light">☀ Light mode</option>
+      </select>
+      <button class="btn-ghost" id="refresh" onclick="refresh()">↻ Refresh</button>
+    </div>
   </header>
 
   <main class="container">

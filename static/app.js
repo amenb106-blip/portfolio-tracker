@@ -23,6 +23,7 @@ function loadPortfolio() {
 
 let portfolio = loadPortfolio();
 let chart = null;
+let lastChart = { labels: [], values: [] };
 let renderVersion = 0;
 
 // Cyan-anchored palette matching the dashboard accent.
@@ -179,7 +180,11 @@ function createRow(stock, cells) {
 }
 
 function renderChart(labels, values) {
+  lastChart = { labels, values };
   const ctx = document.getElementById("chart");
+  const styles = getComputedStyle(document.documentElement);
+  const borderColor = styles.getPropertyValue("--bg").trim() || "#0b0d12";
+  const legendColor = styles.getPropertyValue("--muted").trim() || "#8b90a0";
   if (chart) chart.destroy();
   chart = new Chart(ctx, {
     type: "doughnut",
@@ -188,7 +193,7 @@ function renderChart(labels, values) {
       datasets: [{
         data: values,
         backgroundColor: labels.map((_, i) => CHART_COLORS[i % CHART_COLORS.length]),
-        borderColor: "#0b0d12",
+        borderColor: borderColor,
         borderWidth: 3,
         hoverOffset: 6
       }]
@@ -198,7 +203,7 @@ function renderChart(labels, values) {
       plugins: {
         legend: {
           position: "bottom",
-          labels: { color: "#8b90a0", padding: 14, font: { size: 12 }, boxWidth: 12 }
+          labels: { color: legendColor, padding: 14, font: { size: 12 }, boxWidth: 12 }
         }
       }
     }
@@ -256,4 +261,20 @@ async function refresh() {
   }
 }
 
+function setTheme(theme) {
+  const t = theme === "light" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", t);
+  localStorage.setItem("theme", t);
+  const sel = document.getElementById("theme-select");
+  if (sel) sel.value = t;
+  // Re-skin the existing chart (borders/legend) without refetching prices.
+  if (chart) renderChart(lastChart.labels, lastChart.values);
+}
+
+function initTheme() {
+  const saved = localStorage.getItem("theme");
+  setTheme(saved === "light" ? "light" : "dark");
+}
+
+initTheme();
 render();

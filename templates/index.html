@@ -8,14 +8,14 @@
 <body>
   <header class="topbar">
     <div class="brand">
-      <span class="logo">▨</span>
+      <svg class="logo" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M3 15l5-6 3.5 3L17 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12.5 5H17v4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
       Portfolio Dashboard
     </div>
     <div class="topbar-actions">
-      <select id="theme-select" class="theme-select" onchange="setTheme(this.value)" aria-label="Color theme">
-        <option value="dark">🌙 Dark mode</option>
-        <option value="light">☀ Light mode</option>
-      </select>
+      <button class="btn-icon" id="theme-toggle" onclick="toggleTheme()" aria-label="Toggle light/dark theme" title="Toggle theme">☀</button>
       <button class="btn-ghost" id="refresh" onclick="refresh()">↻ Refresh</button>
     </div>
   </header>

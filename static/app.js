@@ -26,13 +26,11 @@ let chart = null;
 let lastChart = { labels: [], values: [] };
 let renderVersion = 0;
 
-// Cyan-anchored palette matching the dashboard accent.
 const CHART_COLORS = [
   "#22d3ee", "#2fd39b", "#818cf8", "#f0645f",
   "#fbbf24", "#c084fc", "#38bdf8", "#f97316"
 ];
 
-// Keep the minus in front of the $ (-$14.32, not $-14.32).
 function formatCurrency(amount) {
   const sign = amount < 0 ? "-" : "";
   return `${sign}$${Math.abs(amount).toFixed(2)}`;
@@ -265,10 +263,15 @@ function setTheme(theme) {
   const t = theme === "light" ? "light" : "dark";
   document.documentElement.setAttribute("data-theme", t);
   localStorage.setItem("theme", t);
-  const sel = document.getElementById("theme-select");
-  if (sel) sel.value = t;
-  // Re-skin the existing chart (borders/legend) without refetching prices.
+  // Button shows the mode you'd switch to.
+  const btn = document.getElementById("theme-toggle");
+  if (btn) btn.textContent = t === "dark" ? "☀" : "🌙";
   if (chart) renderChart(lastChart.labels, lastChart.values);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute("data-theme");
+  setTheme(current === "dark" ? "light" : "dark");
 }
 
 function initTheme() {

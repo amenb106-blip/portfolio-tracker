@@ -420,16 +420,16 @@ function removeStock(ticker) {
 
 async function refresh() {
   const btn = document.getElementById("refresh");
+  const label = document.getElementById("refresh-label");
   btn.disabled = true;
   btn.classList.add("spinning");
-  const original = btn.textContent;
-  btn.textContent = "↻ Refreshing…";
+  label.textContent = "Refreshing…";
   try {
     await Promise.all([render(), renderWatchlist()]);
   } finally {
     btn.disabled = false;
     btn.classList.remove("spinning");
-    btn.textContent = original;
+    label.textContent = "Refresh";
   }
 }
 
@@ -437,9 +437,6 @@ function setTheme(theme) {
   const t = theme === "light" ? "light" : "dark";
   document.documentElement.setAttribute("data-theme", t);
   localStorage.setItem("theme", t);
-  // Button shows the mode you'd switch to.
-  const btn = document.getElementById("theme-toggle");
-  if (btn) btn.textContent = t === "dark" ? "☀" : "🌙";
   if (chart) renderChart(lastChart.labels, lastChart.values);
 }
 

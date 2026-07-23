@@ -221,7 +221,7 @@ body {
 .card {
   padding: 20px 22px;
   border: 1px solid var(--border);
-  border-radius: 0;
+  border-radius: 5px;
   background: var(--surface);
 }
 
@@ -329,7 +329,7 @@ tbody tr:hover {
   width: 104px;
   padding: 9px 11px;
   border: 1px solid var(--border);
-  border-radius: 0;
+  border-radius: 5px;
   background: var(--surface);
   color: var(--text);
   font-size: 14px;
@@ -347,7 +347,7 @@ tbody tr:hover {
 .btn-primary {
   padding: 9px 18px;
   border: 0;
-  border-radius: 0;
+  border-radius: 5px;
   background: var(--accent);
   color: var(--on-accent);
   cursor: pointer;
@@ -433,7 +433,7 @@ tbody tr:hover {
 .banner {
   padding: 11px 14px;
   border: 1px solid rgb(240 100 95 / 40%);
-  border-radius: 0;
+  border-radius: 5px;
   background: rgb(240 100 95 / 12%);
   color: #ffb3b0;
   font-size: 14px;

@@ -1,14 +1,4 @@
-/*
- * Portfolio Dashboard (readable copy)
- *
- * This file uses the same localStorage keys and API as app.js, so it can
- * display and update the same portfolio, watchlist, and theme preference.
- */
-
-// -----------------------------------------------------------------------------
-// Constants and application state
-// -----------------------------------------------------------------------------
-
+// Constants and state
 const TICKER_PATTERN = /^[A-Z0-9.^=-]{1,20}$/;
 const EMPTY_VALUE = "—";
 const CHART_COLORS = [
@@ -21,14 +11,11 @@ let watchlist = loadWatchlist();
 let chart = null;
 let lastChartData = { labels: [], values: [] };
 
-// Each counter prevents an older network response from replacing newer content.
+// Bumped each render so a stale response can bail out
 let portfolioRenderVersion = 0;
 let watchlistRenderVersion = 0;
 
-// -----------------------------------------------------------------------------
 // Storage and validation
-// -----------------------------------------------------------------------------
-
 function isValidTicker(ticker) {
   return TICKER_PATTERN.test(ticker);
 }
@@ -71,10 +58,7 @@ function saveWatchlist() {
   localStorage.setItem("watchlist", JSON.stringify(watchlist));
 }
 
-// -----------------------------------------------------------------------------
-// Formatting and small UI helpers
-// -----------------------------------------------------------------------------
-
+// Formatting and UI helpers
 function getElement(id) {
   return document.getElementById(id);
 }
@@ -158,10 +142,7 @@ function setEmptyStateVisible(elementId, isVisible) {
   getElement(elementId).style.display = isVisible ? "block" : "none";
 }
 
-// -----------------------------------------------------------------------------
 // Price API
-// -----------------------------------------------------------------------------
-
 async function fetchQuote(ticker) {
   const response = await fetch(`/price?ticker=${encodeURIComponent(ticker)}`);
   const data = await response.json();
@@ -194,10 +175,7 @@ async function fetchQuotes(items, getTicker) {
   }));
 }
 
-// -----------------------------------------------------------------------------
 // Table and chart rendering
-// -----------------------------------------------------------------------------
-
 function createRow(cells, onRemove) {
   const row = document.createElement("tr");
 
@@ -283,10 +261,7 @@ function renderChartLegend(labels, values) {
   getElement("chart-legend").replaceChildren(rows);
 }
 
-// -----------------------------------------------------------------------------
 // Portfolio rendering
-// -----------------------------------------------------------------------------
-
 function createUnavailablePortfolioRow(stock) {
   return createRow([
     { text: stock.ticker, className: "ticker", label: "Ticker" },
@@ -395,10 +370,7 @@ async function render() {
   renderChart(chartLabels, chartValues);
 }
 
-// -----------------------------------------------------------------------------
 // Watchlist rendering
-// -----------------------------------------------------------------------------
-
 function createWatchlistRow(ticker, quote) {
   if (quote === null) {
     return createRow([
@@ -441,10 +413,7 @@ async function renderWatchlist() {
   getElement("watchlist-body").replaceChildren(rows);
 }
 
-// -----------------------------------------------------------------------------
 // User actions
-// -----------------------------------------------------------------------------
-
 function addWatch() {
   const input = getElement("watch-ticker");
   const ticker = input.value.trim().toUpperCase();
@@ -518,10 +487,7 @@ async function refresh() {
   }
 }
 
-// -----------------------------------------------------------------------------
-// Theme setup and application startup
-// -----------------------------------------------------------------------------
-
+// Theme and startup
 function setTheme(theme) {
   const selectedTheme = theme === "light" ? "light" : "dark";
   document.documentElement.setAttribute("data-theme", selectedTheme);

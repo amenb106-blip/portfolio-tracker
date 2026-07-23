@@ -1,7 +1,4 @@
-/* -------------------------------------------------------------------------- */
-/* Theme tokens                                                               */
-/* -------------------------------------------------------------------------- */
-
+/* Theme tokens */
 :root,
 :root[data-theme="dark"] {
   --bg: #000;
@@ -41,10 +38,7 @@
   box-shadow: 0 1px 3px rgb(16 24 40 / 7%);
 }
 
-/* -------------------------------------------------------------------------- */
-/* Global layout and header                                                   */
-/* -------------------------------------------------------------------------- */
-
+/* Layout and header */
 * {
   box-sizing: border-box;
 }
@@ -102,10 +96,7 @@ body {
   padding: 28px 32px 56px;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Portfolio overview and allocation chart                                    */
-/* -------------------------------------------------------------------------- */
-
+/* Overview and allocation chart */
 .topgrid {
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -226,10 +217,7 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Cards, tables, and performance values                                      */
-/* -------------------------------------------------------------------------- */
-
+/* Cards and tables */
 .card {
   padding: 20px 22px;
   border: 1px solid var(--border);
@@ -330,10 +318,7 @@ tbody tr:hover {
   text-align: center;
 }
 
-/* -------------------------------------------------------------------------- */
-/* Form controls and buttons                                                  */
-/* -------------------------------------------------------------------------- */
-
+/* Forms and buttons */
 .form {
   display: flex;
   flex-wrap: wrap;
@@ -375,7 +360,6 @@ tbody tr:hover {
   filter: brightness(1.08);
 }
 
-/* The top-bar controls are the one intentionally rounded button style. */
 .btn-ghost {
   display: inline-flex;
   align-items: center;
@@ -420,7 +404,6 @@ tbody tr:hover {
   }
 }
 
-/* The visible icon shows the theme that clicking the button will select. */
 .icon-sun,
 .icon-moon {
   display: none;
@@ -446,10 +429,7 @@ tbody tr:hover {
   color: var(--text);
 }
 
-/* -------------------------------------------------------------------------- */
-/* Banner and responsive layout                                               */
-/* -------------------------------------------------------------------------- */
-
+/* Banner and responsive */
 .banner {
   padding: 11px 14px;
   border: 1px solid rgb(240 100 95 / 40%);
@@ -487,7 +467,6 @@ tbody tr:hover {
     letter-spacing: -1px;
   }
 
-  /* Make cards full-bleed while keeping the overview aligned to the container. */
   .holdings-card,
   .watchlist-card {
     margin-right: -16px;
@@ -524,7 +503,7 @@ tbody tr:hover {
     border-bottom: 0;
   }
 
-  /* Holdings: ticker/remove, three values, then the two performance values. */
+  /* Stack each holding into a 6-col grid on narrow screens */
   .holdings-card tbody tr {
     display: grid;
     grid-template-areas:
@@ -586,7 +565,6 @@ tbody tr:hover {
     align-items: flex-end;
   }
 
-  /* Watchlist: one compact row with ticker, price, daily change, and remove. */
   .watchlist-card tbody tr {
     display: flex;
     align-items: center;

@@ -6,7 +6,7 @@ Add your holdings, see what they're worth, and track your total and daily perfor
 
 **Live:** https://portfolio-tracker-lv7o.onrender.com
 
-![Portfolio Dashboard](screenshot.png)
+![Portfolio Dashboard](Screenshot.png)
 
 ---
 

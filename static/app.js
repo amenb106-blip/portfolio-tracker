@@ -148,7 +148,9 @@ async function fetchQuote(ticker) {
   const data = await response.json();
 
   if (!response.ok || data.error) {
-    throw new Error(data.error || `Failed to fetch ${ticker}`);
+    const error = new Error(data.error || `Failed to fetch ${ticker}`);
+    error.status = response.status;
+    throw error;
   }
 
   const price = Number(data.price);
@@ -168,9 +170,9 @@ async function fetchQuote(ticker) {
 async function fetchQuotes(items, getTicker) {
   return Promise.all(items.map(async (item) => {
     try {
-      return { item, quote: await fetchQuote(getTicker(item)) };
-    } catch {
-      return { item, quote: null };
+      return { item, quote: await fetchQuote(getTicker(item)), serviceDown: false };
+    } catch (error) {
+      return { item, quote: null, serviceDown: error.status >= 500 };
     }
   }));
 }
@@ -336,14 +338,16 @@ async function render() {
   const chartLabels = [];
   const chartValues = [];
   const unavailableTickers = [];
+  let serviceDown = false;
   let totalValue = 0;
   let totalCost = 0;
   let dailyGain = 0;
   let previousValue = 0;
 
-  for (const { item: stock, quote } of results) {
+  for (const { item: stock, quote, serviceDown: quoteServiceDown } of results) {
     if (quote === null) {
       unavailableTickers.push(stock.ticker);
+      serviceDown = serviceDown || quoteServiceDown;
       rows.append(createUnavailablePortfolioRow(stock));
       continue;
     }
@@ -361,7 +365,9 @@ async function render() {
   getElement("table-body").replaceChildren(rows);
   updatePortfolioSummary(totalValue, totalCost, dailyGain, previousValue, chartLabels.length > 0);
 
-  if (unavailableTickers.length) {
+  if (serviceDown) {
+    showBanner(`The price service is unavailable right now (${unavailableTickers.join(", ")}). Try refreshing in a moment.`);
+  } else if (unavailableTickers.length) {
     showBanner(`Couldn't fetch a price for: ${unavailableTickers.join(", ")}. Check the ticker symbol.`);
   } else {
     clearBanner();

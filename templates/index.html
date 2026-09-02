@@ -62,12 +62,12 @@
       <section class="card holdings-card">
         <div class="card-head">
           <h2 class="card-title">Holdings</h2>
-          <div class="form">
-            <input id="ticker" placeholder="Ticker">
-            <input id="shares" placeholder="Shares" type="number">
-            <input id="buy_price" placeholder="Buy Price" type="number">
-            <button class="btn-primary" onclick="addStock()">Add</button>
-          </div>
+          <form class="form" onsubmit="event.preventDefault(); addStock()">
+            <input id="ticker" placeholder="Ticker" aria-label="Ticker" autocomplete="off">
+            <input id="shares" placeholder="Shares" aria-label="Shares" type="number" min="0" step="any">
+            <input id="buy_price" placeholder="Buy Price" aria-label="Buy price" type="number" min="0" step="any">
+            <button class="btn-primary" type="submit">Add</button>
+          </form>
         </div>
 
         <div class="table-wrap">
@@ -92,10 +92,10 @@
       <section class="card watchlist-card">
         <div class="card-head">
           <h2 class="card-title">Watchlist</h2>
-          <div class="form">
-            <input id="watch-ticker" placeholder="Ticker">
-            <button class="btn-primary" onclick="addWatch()">Add</button>
-          </div>
+          <form class="form" onsubmit="event.preventDefault(); addWatch()">
+            <input id="watch-ticker" placeholder="Ticker" aria-label="Watchlist ticker" autocomplete="off">
+            <button class="btn-primary" type="submit">Add</button>
+          </form>
         </div>
 
         <div class="table-wrap">
@@ -115,7 +115,7 @@
       </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script src="{{ url_for('static', filename='app.js') }}"></script>
   </body>
 </html>

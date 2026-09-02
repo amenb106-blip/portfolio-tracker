@@ -63,6 +63,13 @@ python app.py
 
 Open http://127.0.0.1:5000
 
+To run the tests:
+
+```bash
+pip install -r requirements-dev.txt
+python -m pytest
+```
+
 ---
 
 ## Notes

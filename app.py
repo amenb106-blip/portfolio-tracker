@@ -20,8 +20,10 @@ def price():
         return jsonify({"error": "invalid ticker"}), 400
     try:
         return jsonify(prices.get_quote(ticker))
+    except prices.UnknownTicker:
+        return jsonify({"error": f"no price found for {ticker}"}), 404
     except Exception:
-        return jsonify({"error": f"could not fetch price for {ticker}"}), 400
+        return jsonify({"error": "price service unavailable"}), 502
 
 if __name__ == "__main__":
     app.run(debug=True)

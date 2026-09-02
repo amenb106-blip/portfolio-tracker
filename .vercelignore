@@ -1,0 +1,9 @@
+.git
+__pycache__
+.pytest_cache
+tests
+*.jpg
+*.JPG
+*.jpeg
+*.png
+requirements-dev.txt

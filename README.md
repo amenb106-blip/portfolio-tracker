@@ -4,9 +4,9 @@ A simple stock portfolio dashboard.
 
 Add your holdings, see what they're worth, and track your total and daily performance in real time.
 
-**Live:** https://portfolio-tracker-lv7o.onrender.com
+**Live:** deployed on Vercel
 
-![Portfolio Dashboard](Screenshot.png)
+![Portfolio Dashboard](screenshot.png)
 
 ---
 
@@ -38,6 +38,7 @@ browser → Flask (/price) → yfinance → Yahoo Finance
 
 - `app.py` — Flask server and `/price` endpoint
 - `prices.py` — fetches stock data
+- `api/index.py` — Vercel entrypoint that exposes the Flask app
 - `templates/index.html` — main page
 - `static/app.js` — portfolio logic (add/remove/render)
 - `static/style.css` — styling + responsive layout
@@ -69,6 +70,12 @@ To run the tests:
 pip install -r requirements-dev.txt
 python -m pytest
 ```
+
+---
+
+## Deploying
+
+The project is set up for Vercel. Import the repository in the Vercel dashboard and deploy with the default settings. `vercel.json` routes every request to the Flask app in `api/index.py`.
 
 ---
 

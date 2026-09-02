@@ -38,7 +38,6 @@ browser → Flask (/price) → yfinance → Yahoo Finance
 
 - `app.py` — Flask server and `/price` endpoint
 - `prices.py` — fetches stock data
-- `api/index.py` — Vercel entrypoint that exposes the Flask app
 - `templates/index.html` — main page
 - `static/app.js` — portfolio logic (add/remove/render)
 - `static/style.css` — styling + responsive layout
@@ -75,7 +74,7 @@ python -m pytest
 
 ## Deploying
 
-The project is set up for Vercel. Import the repository in the Vercel dashboard and deploy with the default settings. `vercel.json` routes every request to the Flask app in `api/index.py`.
+Import the repository in the Vercel dashboard and deploy with the default settings. Vercel detects the Flask app in `app.py` and routes every request to it.
 
 ---
 
